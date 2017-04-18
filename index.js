@@ -25,7 +25,7 @@ try { mkdirp.sync(parentLogDir); } catch(e) { log(e.message); }
 
 log(`Starting server on port ${listenPort}...`);
 
-var server = net.createServer();
+const server = net.createServer();
 
 server.on('close', (e) => log('Finished.', e));
 server.on('connection', (downstream) => {
