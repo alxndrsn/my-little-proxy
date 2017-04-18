@@ -39,7 +39,9 @@ server.on('connection', (downstream) => {
   upstream.on('connect', () => {
     downstream.on('data', (data) => {
       const raw = data.toString(),
-          filtered = raw.replace(/Host: .*/, `Host: ${targetHost}`);
+          filtered = raw.replace(/Host: .*/, `Host: ${targetHost}`)
+                        .replace(/Connection: Keep-Alive/i, 'Connection: close')
+                        .replace(/Date: .*/, `Date: ${new Date().toUTCString()}`);
 
       upstream.write(filtered, () => log(cid, 'upstream.write()'));
       fs.appendFile(`${logDir}/request.raw`, raw, () => log(cid, 'request.raw append'));
