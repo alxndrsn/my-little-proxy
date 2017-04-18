@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+readFirst=''
+while read -r line; do
+	line="$(tr -d '\r' <<< $line)"
+	if [[ -z $readFirst ]]; then
+		readFirst=true
+		parts=($line)
+		echo -n "curl $1${parts[1]}"
+	elif [[ "$line" = "" ]]; then
+		echo " # TODO body not handled"
+		exit 0
+	else
+		echo -n " -H '${line}'"
+	fi
+done < "${2:-/dev/stdin}"

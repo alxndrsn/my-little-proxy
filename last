@@ -1,0 +1,4 @@
+#!/bin/bash -eu
+dir="$(ls -t ./log | head -1)"
+file="$(ls -t ./log/$dir | head -1)"
+echo "./log/$dir/$file"
