@@ -4,10 +4,10 @@ const fs = require('fs'),
     log = console.log,
     mkdirp = require('mkdirp'),
     net = require('net'),
-    listenPort = process.argv[2] || 8080,
+    listenPort = process.argv[4] || 8080,
     parentLogDir = (process.argv[5] || './log') + '/' + Date.now(),
-    targetHost = process.argv[3] || 'example.com',
-    targetPort = process.argv[4] || 443,
+    targetHost = process.argv[2] || 'example.com',
+    targetPort = process.argv[3] || 443,
     tls = require('tls'),
     ___end___ = true;
 
