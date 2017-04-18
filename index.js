@@ -2,6 +2,7 @@
 
 const fs = require('fs'),
     log = console.log,
+    mkdirp = require('mkdirp'),
     net = require('net'),
     listenPort = process.argv[2] || 8080,
     parentLogDir = (process.argv[5] || './log') + '/' + Date.now(),
@@ -20,7 +21,7 @@ if(process.argv[2] === '-h' || process.argv[2] === '--help') {
 let lastConnectionId = 0;
 
 log(`Creating log directory at ${parentLogDir}...`);
-try { fs.mkdirSync(parentLogDir); } catch(e) { log(e.message); }
+try { mkdirp.sync(parentLogDir); } catch(e) { log(e.message); }
 
 log(`Starting server on port ${listenPort}...`);
 
@@ -34,7 +35,7 @@ server.on('connection', (downstream) => {
       logDir = `${parentLogDir}/${cid}`,
       upstream = tls.connect(targetPort, targetHost);
 
-  fs.mkdirSync(logDir);
+  mkdirp.sync(logDir);
 
   upstream.on('connect', () => {
     downstream.on('data', (data) => {
