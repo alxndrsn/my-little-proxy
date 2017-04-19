@@ -4,8 +4,9 @@ const fs = require('fs'),
     log = console.log,
     mkdirp = require('mkdirp'),
     net = require('net'),
-    listenPort = process.argv[4] || 8080,
-    parentLogDir = (process.argv[5] || './log') + '/' + Date.now(),
+    listenPort = process.argv[5] || 8080,
+    localHost = process.argv[4] || require('os').networkInterfaces().en0.find((it) => it.family === 'IPv4').address,
+    parentLogDir = (process.argv[6] || './log') + '/' + Date.now(),
     targetHost = process.argv[2] || 'example.com',
     targetPort = process.argv[3] || 443,
     tls = require('tls'),
@@ -13,7 +14,7 @@ const fs = require('fs'),
 
 if(process.argv[2] === '-h' || process.argv[2] === '--help') {
   console.log(`
-    ${process.argv[1]} <port> <target_host> <target_port> <log_path>
+    ${process.argv[1]} <target_host> <target_port> <local_host> <local_port> <log_path>
   `);
   process.exit();
 }
@@ -52,8 +53,12 @@ server.on('connection', (downstream) => {
   });
 
   upstream.on('data', (data) => {
-    downstream.write(data, () => log(cid, 'downstream.write()'));
-    fs.appendFile(`${logDir}/response.raw`, data, () => log(cid, 'response.raw append'));
+    const raw = data.toString(),
+        filtered = raw.replace(new RegExp(`Location: https://${targetHost}/(.*)`), `Location: http://${localHost}:${listenPort}/$1`);
+
+    downstream.write(filtered, () => log(cid, 'downstream.write()'));
+    fs.appendFile(`${logDir}/response.raw`, raw, () => log(cid, 'response.raw append'));
+    fs.appendFile(`${logDir}/response.filtered`, filtered, () => log(cid, 'response.filtered append'));
     console.log(cid, 'Received from upstream:', data);
   });
 
