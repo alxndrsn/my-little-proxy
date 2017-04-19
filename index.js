@@ -46,7 +46,7 @@ server.on('connection', (downstream) => {
 
       upstream.write(filtered, () => log(cid, 'upstream.write()'));
       fs.appendFile(`${logDir}/request.raw`, raw, () => log(cid, 'request.raw append'));
-      fs.appendFile(`${logDir}/request.filtered`, filtered, () => log(cid, 'request.raw append'));
+      fs.appendFile(`${logDir}/request.filtered`, filtered, () => log(cid, 'request.filtered append'));
       console.log(cid, 'Received data from downstream:', data);
     });
   });
